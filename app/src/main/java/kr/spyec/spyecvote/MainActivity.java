@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import java.util.Arrays;
 
+//최예찬, 메인액티비티(투표현황), 6월5일
 
 public class MainActivity extends AppCompatActivity {
 

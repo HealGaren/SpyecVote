@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
@@ -40,7 +41,7 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
 
-
+//최예찬, 결과액티비티(그래프)
 public class ResultActivity extends AppCompatActivity implements OnChartValueSelectedListener {
 
     private PieChart mChart;
@@ -54,7 +55,9 @@ public class ResultActivity extends AppCompatActivity implements OnChartValueSel
         mChart = (PieChart) findViewById(R.id.chart);
         assert mChart != null;
         mChart.setUsePercentValues(false);
-        mChart.setDescription("");
+        Description desc = new Description();
+        desc.setText("");
+        mChart.setDescription(desc);
         mChart.setExtraOffsets(5, 10, 5, 5);
 
         mChart.setDragDecelerationFrictionCoef(0.95f);

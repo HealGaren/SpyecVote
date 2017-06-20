@@ -10,6 +10,7 @@ import android.widget.TextView;
 /**
  * Created by 최예찬 on 2016-08-22.
  */
+//최예찬, 투표 리사이클러뷰 어댑터, 6월5일
 public class VoteAdapter extends RecyclerView.Adapter<VoteAdapter.ViewHolder> {
 
     private Context context;

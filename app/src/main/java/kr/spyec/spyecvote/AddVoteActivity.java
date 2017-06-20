@@ -12,9 +12,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by 최예찬 on 2016-08-22.
- */
+
+//이동진 + 최예찬, 투표후보 추가 액티비티, 6월15일
 public class AddVoteActivity extends AppCompatActivity {
 
     EditText mainNameEdit;

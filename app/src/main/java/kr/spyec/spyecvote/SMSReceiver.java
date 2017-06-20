@@ -16,9 +16,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by 최예찬 on 2016-08-22.
- */
+
+
+//이동진, SMS리시버, 6월7일
 public class SMSReceiver extends BroadcastReceiver {
 
 
@@ -53,7 +53,7 @@ public class SMSReceiver extends BroadcastReceiver {
                 } catch (DataManager.AlreadyVoteException e) {
                     sendSMS(context, origNumber, DataManager.getInstance().getAlreadyVoteMessage());
                 } catch (DataManager.UnknownTargetVoteException e) {
-//                    sendSMS(context, origNumber, DataManager.getInstance().getUnknownTargetVoteMessage());
+                    sendSMS(context, origNumber, DataManager.getInstance().getUnknownTargetVoteMessage());
                 }
             }
 

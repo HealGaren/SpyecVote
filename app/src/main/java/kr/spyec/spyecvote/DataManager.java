@@ -13,9 +13,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Created by 최예찬 on 2016-08-22.
- */
+//최예찬, 데이터관리 싱글톤, 6월20일
+
 public class DataManager {
 
     private SharedPreferences votePref, resultPref, configPref;
