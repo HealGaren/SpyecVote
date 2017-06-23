@@ -1,29 +1,23 @@
-package kr.spyec.spyecvote;
+package kr.spyec.spyecvote.fragment;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.net.Uri;
-import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import android.os.Handler;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.SeekBar;
-import android.widget.TextView;
+import android.view.ViewGroup;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
@@ -35,24 +29,30 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.interfaces.datasets.IDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
 
-//최예찬, 결과액티비티(그래프)
-public class ResultActivity extends AppCompatActivity implements OnChartValueSelectedListener {
+import kr.spyec.spyecvote.DataManager;
+import kr.spyec.spyecvote.R;
+import kr.spyec.spyecvote.VoteItem;
+
+/**
+ * Created by Sunrin on 2017-06-23.
+ */
+
+public class ResultFragment extends Fragment implements OnChartValueSelectedListener {
 
     private PieChart mChart;
 
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_result);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_result, container, false);
 
-        mChart = (PieChart) findViewById(R.id.chart);
+        mChart = (PieChart) view.findViewById(R.id.chart);
         assert mChart != null;
         mChart.setUsePercentValues(false);
         Description desc = new Description();
@@ -103,26 +103,29 @@ public class ResultActivity extends AppCompatActivity implements OnChartValueSel
 //        mChart.setEntryLabelTypeface(mTfRegular);
         mChart.setEntryLabelTextSize(12f);
 
+        return view;
     }
+
+
 
 
     MyReceiver myReceiver = null;
     boolean isReceiverRegistered = false;
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         if (myReceiver == null) myReceiver = new MyReceiver();
-        registerReceiver(myReceiver, new IntentFilter("data.update"));
+        getActivity().registerReceiver(myReceiver, new IntentFilter("data.update"));
         isReceiverRegistered = true;
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
 
         if (isReceiverRegistered) {
-            unregisterReceiver(myReceiver);
+            getActivity().unregisterReceiver(myReceiver);
             myReceiver = null;
             isReceiverRegistered = false;
         }
@@ -231,6 +234,4 @@ public class ResultActivity extends AppCompatActivity implements OnChartValueSel
     public void onNothingSelected() {
         Log.i("PieChart", "nothing selected");
     }
-
-
 }

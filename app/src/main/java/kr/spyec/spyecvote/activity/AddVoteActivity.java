@@ -1,4 +1,4 @@
-package kr.spyec.spyecvote;
+package kr.spyec.spyecvote.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import kr.spyec.spyecvote.R;
 
 
 //이동진 + 최예찬, 투표후보 추가 액티비티, 6월15일

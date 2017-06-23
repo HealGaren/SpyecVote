@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tabs>
+    <tab
+        id="@+id/tab_vote"
+        icon="@drawable/ic_favorites"
+        title="후보 설정" />
+    <tab
+        id="@+id/tab_result"
+        icon="@drawable/ic_nearby"
+        title="투표 현황" />
+    <tab
+        id="@+id/tab_friends"
+        icon="@drawable/ic_friends"
+        title="설정" />
+</tabs>

@@ -1,58 +1,64 @@
-package kr.spyec.spyecvote;
+package kr.spyec.spyecvote.fragment;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.Typeface;
-import android.net.Uri;
-import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.Arrays;
 
-//최예찬, 메인액티비티(투표현황), 6월5일
+import kr.spyec.spyecvote.DataManager;
+import kr.spyec.spyecvote.R;
+import kr.spyec.spyecvote.VoteAdapter;
+import kr.spyec.spyecvote.VoteItem;
+import kr.spyec.spyecvote.activity.AddVoteActivity;
 
-public class MainActivity extends AppCompatActivity {
+/**
+ * Created by Sunrin on 2017-06-23.
+ */
+
+public class VoteFragment extends Fragment {
+
 
     private RecyclerView recyclerView;
     private VoteAdapter adapter;
     private TextView receiverStatusText;
     private Button receiverSwitchBtn;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+    @Nullable
+    @Override
+    public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_vote, container, false);
+
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
         assert fab != null;
 
-        recyclerView = (RecyclerView) findViewById(R.id.recycler);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new VoteAdapter(this);
+        recyclerView = (RecyclerView) view.findViewById(R.id.recycler);
+        recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
+        adapter = new VoteAdapter(inflater.getContext());
         recyclerView.setAdapter(adapter);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivityForResult(new Intent(MainActivity.this, AddVoteActivity.class), 3000);
+                startActivityForResult(new Intent(inflater.getContext(), AddVoteActivity.class), 3000);
             }
         });
 
-        Button voteResetBtn = (Button) findViewById(R.id.btn_vote_reset);
+        Button voteResetBtn = (Button) view.findViewById(R.id.btn_vote_reset);
         assert voteResetBtn != null;
         voteResetBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button allResetBtn = (Button) findViewById(R.id.btn_all_reset);
+        Button allResetBtn = (Button) view.findViewById(R.id.btn_all_reset);
         assert allResetBtn != null;
         allResetBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,19 +78,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button resultBtn = (Button) findViewById(R.id.btn_result);
-        assert resultBtn != null;
-        resultBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, ResultActivity.class));
-            }
-        });
-
-
-
-        receiverStatusText = (TextView) findViewById(R.id.text_receiver_status);
-        receiverSwitchBtn = (Button) findViewById(R.id.btn_receiver_switch);
+        receiverStatusText = (TextView) view.findViewById(R.id.text_receiver_status);
+        receiverSwitchBtn = (Button) view.findViewById(R.id.btn_receiver_switch);
         assert receiverStatusText != null;
         assert receiverSwitchBtn != null;
 
@@ -100,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
         updateActiveSwitch();
 
-
+        return view;
     }
 
 
@@ -108,19 +103,19 @@ public class MainActivity extends AppCompatActivity {
     boolean isReceiverRegistered = false;
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         if (myReceiver == null) myReceiver = new MyReceiver();
-        registerReceiver(myReceiver, new IntentFilter("data.update"));
+        getActivity().registerReceiver(myReceiver, new IntentFilter("data.update"));
         isReceiverRegistered = true;
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
 
         if (isReceiverRegistered) {
-            unregisterReceiver(myReceiver);
+            getActivity().unregisterReceiver(myReceiver);
             myReceiver = null;
             isReceiverRegistered = false;
         }
@@ -159,10 +154,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 3000){
-            if(resultCode == RESULT_OK){
+            if(resultCode == Activity.RESULT_OK){
                 String mainName = data.getStringExtra("mainName");
                 String[] etc = data.getStringArrayExtra("etc");
                 adapter.addItem(new VoteItem(mainName, Arrays.asList(etc)));
