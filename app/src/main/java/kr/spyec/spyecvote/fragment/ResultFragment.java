@@ -54,10 +54,9 @@ public class ResultFragment extends Fragment implements OnChartValueSelectedList
 
         mChart = (PieChart) view.findViewById(R.id.chart);
         assert mChart != null;
-        mChart.setUsePercentValues(false);
-        Description desc = new Description();
-        desc.setText("");
-        mChart.setDescription(desc);
+
+        mChart.setUsePercentValues(true);
+        mChart.getDescription().setEnabled(false);
         mChart.setExtraOffsets(5, 10, 5, 5);
 
         mChart.setDragDecelerationFrictionCoef(0.95f);
@@ -86,22 +85,24 @@ public class ResultFragment extends Fragment implements OnChartValueSelectedList
 
         // add a selection listener
         mChart.setOnChartValueSelectedListener(this);
-
         setData();
 
         mChart.animateY(1400, Easing.EasingOption.EaseInOutQuad);
-        // mChart.spin(2000, 0, 360);
+//         mChart.spin(2000, 0, 360, Easing.EasingOption.EaseInBack);
+
 
         Legend l = mChart.getLegend();
-        l.setPosition(Legend.LegendPosition.RIGHT_OF_CHART);
+        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+        l.setOrientation(Legend.LegendOrientation.VERTICAL);
+        l.setDrawInside(false);
         l.setXEntrySpace(7f);
         l.setYEntrySpace(0f);
         l.setYOffset(0f);
 
         // entry label styling
-        mChart.setEntryLabelColor(Color.WHITE);
-//        mChart.setEntryLabelTypeface(mTfRegular);
-        mChart.setEntryLabelTextSize(12f);
+        mChart.setEntryLabelColor(Color.BLACK);
+        mChart.setEntryLabelTextSize(20f);
 
         return view;
     }
@@ -190,15 +191,14 @@ public class ResultFragment extends Fragment implements OnChartValueSelectedList
             colors.add(c);
 
         colors.add(ColorTemplate.getHoloBlue());
-
         dataSet.setColors(colors);
         //dataSet.setSelectionShift(0f);
 
         PieData data = new PieData(dataSet);
 //        data.setValueFormatter(new PercentFormatter());
         data.setValueFormatter(new PercentFormatter());
-        data.setValueTextSize(11f);
-        data.setValueTextColor(Color.WHITE);
+        data.setValueTextSize(15f);
+        data.setValueTextColor(Color.BLACK);
 //        data.setValueTypeface(mTfLight);
         mChart.setData(data);
 

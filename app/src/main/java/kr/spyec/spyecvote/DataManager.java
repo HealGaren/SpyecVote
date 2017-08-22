@@ -3,6 +3,7 @@ package kr.spyec.spyecvote;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.provider.ContactsContract;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -11,22 +12,25 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 //최예찬, 데이터관리 싱글톤, 6월20일
 
 public class DataManager {
 
-    private SharedPreferences votePref, resultPref, configPref;
+    private SharedPreferences votePref, resultPref, configPref, multiplePref;
 
     private Gson gson;
     private Type fromJsonType;
     private List<VoteItem> items;
 
 
+
     private static final String VOTE_PREF_KEY = "vote";
     private static final String RESULT_PREF_KEY = "result";
     private static final String CONFIG_PREF_KEY = "config";
+    private static final String MULTIPLE_PREF_KEY = "multiple";
 
     private DataManager(Context context) {
         if (votePref == null)
@@ -35,13 +39,18 @@ public class DataManager {
             resultPref = context.getSharedPreferences(RESULT_PREF_KEY, Context.MODE_PRIVATE);
         if (configPref == null)
             configPref = context.getSharedPreferences(CONFIG_PREF_KEY, Context.MODE_PRIVATE);
+        if (multiplePref == null)
+            multiplePref = context.getSharedPreferences(MULTIPLE_PREF_KEY, Context.MODE_PRIVATE);
 
         gson = new Gson();
         fromJsonType = new TypeToken<List<VoteItem>>() {
         }.getType();
         loadItems();
         loadReceiverActiveStatus();
+        loadMultipleVote();
     }
+
+
 
     private static DataManager instance;
 
@@ -64,7 +73,10 @@ public class DataManager {
     public void resetAll() {
         resetVote();
         configPref.edit().clear().apply();
+        multiplePref.edit().clear().apply();
         loadItems();
+        loadReceiverActiveStatus();
+        loadMultipleVote();
     }
 
 
@@ -128,7 +140,8 @@ public class DataManager {
         }
 
         if (searchedTarget == null) throw new UnknownTargetVoteException();
-        if (voted.contains(searchedTarget)) throw new AlreadyVoteException();
+        if (isMultipleVote ? voted.contains(searchedTarget) : !voted.isEmpty()) throw new AlreadyVoteException();
+
 
         voted.add(searchedTarget);
         votePref.edit().putStringSet(phone, voted).apply();
@@ -136,6 +149,7 @@ public class DataManager {
         int currentVoteCount = getVoteCount(searchedTarget);
         resultPref.edit().putInt(searchedTarget, currentVoteCount + 1).apply();
     }
+
 
     public int getVoteCount(String target) {
         return resultPref.getInt(target, 0);
@@ -170,4 +184,29 @@ public class DataManager {
     public boolean isReceiverActive() {
         return isReceiverActive;
     }
+
+    private final static String IS_MULTIPLE_KEY = "isMultiple";
+    private boolean isMultipleVote = false;
+    public void toggleMultipleVote() {
+        isMultipleVote = !isMultipleVote;
+        multiplePref.edit().putBoolean(IS_RECEIVER_ACTIVE_KEY, isMultipleVote).apply();
+    }
+
+    public void loadMultipleVote() {
+        isMultipleVote = multiplePref.getBoolean(IS_MULTIPLE_KEY, false);
+    }
+
+    public boolean isMultipleVote() {
+        return isMultipleVote;
+    }
+
+    public String getRandomPhone(){
+
+        List<String> keyList = new ArrayList<>();
+        keyList.addAll(votePref.getAll().keySet());
+
+        if(keyList.isEmpty()) return null;
+        return keyList.get(new Random().nextInt(keyList.size()));
+    }
+
 }

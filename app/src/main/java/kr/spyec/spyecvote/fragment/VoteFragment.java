@@ -3,6 +3,7 @@ package kr.spyec.spyecvote.fragment;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -35,8 +37,8 @@ public class VoteFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private VoteAdapter adapter;
-    private TextView receiverStatusText;
-    private Button receiverSwitchBtn;
+    private TextView receiverStatusText, multipleStatusText;
+    private Button receiverSwitchBtn, multipleSwitchBtn;
 
     @Nullable
     @Override
@@ -75,6 +77,8 @@ public class VoteFragment extends Fragment {
             public void onClick(View v) {
                 DataManager.getInstance().resetAll();
                 adapter.notifyDataSetChanged();
+                updateActiveSwitch();
+                updateMultipleSwitch();
             }
         });
 
@@ -84,6 +88,10 @@ public class VoteFragment extends Fragment {
         assert receiverSwitchBtn != null;
 
 
+        multipleStatusText = (TextView) view.findViewById(R.id.text_multiple_ok);
+        multipleSwitchBtn = (Button) view.findViewById(R.id.btn_multiple_switch);
+        assert multipleStatusText != null;
+        assert multipleSwitchBtn != null;
 
         receiverSwitchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,6 +103,32 @@ public class VoteFragment extends Fragment {
 
         updateActiveSwitch();
 
+        multipleSwitchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DataManager.getInstance().toggleMultipleVote();
+                updateMultipleSwitch();
+            }
+        });
+
+        updateMultipleSwitch();
+
+
+        view.findViewById(R.id.btn_random).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String str = DataManager.getInstance().getRandomPhone();
+                new AlertDialog.Builder(inflater.getContext())
+                        .setMessage(str != null ? String.format("'%s' 분께서 당첨되었습니다.", str) : "한 명 이상 투표했어야 합니다.")
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        })
+                        .show();
+            }
+        });
         return view;
     }
 
@@ -108,6 +142,8 @@ public class VoteFragment extends Fragment {
         if (myReceiver == null) myReceiver = new MyReceiver();
         getActivity().registerReceiver(myReceiver, new IntentFilter("data.update"));
         isReceiverRegistered = true;
+        updateActiveSwitch();
+        updateMultipleSwitch();
     }
 
     @Override
@@ -149,6 +185,18 @@ public class VoteFragment extends Fragment {
         else {
             receiverStatusText.setText("현재 가동 안 함");
             receiverSwitchBtn.setText("켜기");
+        }
+    }
+
+
+    private void updateMultipleSwitch(){
+        if(DataManager.getInstance().isMultipleVote()) {
+            multipleStatusText.setText("다중투표 허용 중");
+            multipleSwitchBtn.setText("끄기");
+        }
+        else {
+            multipleStatusText.setText("다중투표 비허용 중");
+            multipleSwitchBtn.setText("켜기");
         }
     }
 
